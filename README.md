@@ -48,6 +48,8 @@ Here is the same journey as it actually looks in production — five products, f
 
 ## Act 01 — The engine
 
+<img src="assets/act-01-engine.png" alt="01 — The engine — asmdb" width="100%">
+
 **Why write a database in assembly in 2026?** Because the moment you refuse a general-purpose runtime, you have to justify every byte you spend — and it turns out most databases spend an enormous number of bytes on things nobody asked for.
 
 asmdb is a single flat file of 256-byte records. That number is not a style choice. Because 256 is a power of two, finding record *N* is a base address plus a shift — two instructions. There is no page table, no extent manager, no buffer pool and no catalog lookup, because **there is nothing to look up, and nothing to look it up in**.
@@ -66,6 +68,8 @@ Durability is equally literal. A commit is not a feeling, it is **a place**: two
 
 ## Act 02 — The service
 
+<img src="assets/act-02-service.png" alt="02 — The service — www.asmdb.cloud" width="100%">
+
 An engine nobody can reach is a hobby. **[www.asmdb.cloud](https://www.asmdb.cloud)** is the part that turns a 43 KB binary into something a stranger can provision with a credit card.
 
 <img src="assets/shot-asmdb-cloud.png" alt="The asmdb.cloud console" width="100%">
@@ -81,6 +85,8 @@ Three tiers — free, $15 and $49 — sit on top of a platform floor of $141.76 
 ---
 
 ## Act 03 — The workload
+
+<img src="assets/act-03-workload.png" alt="03 — The workload — asmdb.analytics" width="100%">
 
 **asmdb.analytics** is a first-party **Microsoft Fabric workload**. It appears in the workload hub, it installs into a workspace, and it brings its own item type: the *asmDB Sync Hub*.
 
@@ -98,31 +104,41 @@ And if we disappeared tomorrow, the notebook would still work. That is not a mar
 
 ## Act 04 — The product
 
-Everything above is infrastructure, and infrastructure proves nothing by itself. So we built something that could only exist if all of it worked.
+<img src="assets/act-04-product.png" alt="04 — The product — www.pixelslime.cloud" width="100%">
 
-<img src="assets/slide-15-product.png" alt="04 — The product — www.pixelslime.cloud" width="100%">
+Everything above is infrastructure, and infrastructure proves nothing by itself. So we built something that could only exist if all of it worked.
 
 **[www.pixelslime.cloud](https://www.pixelslime.cloud)** blooms one AI-generated slime a day, forever. Every card is a complete trading card — name, level, rarity, type, biome, personality, power, a quote and four stats — and every card must fit into **175 bytes of asmdb content**. Not 176.
 
 <img src="assets/shot-pixelslime-site.png" alt="The PixelSlime web experience" width="100%">
 
-### The generation pipeline
+### How a card gets generated
 
 This is the part people assume is a single prompt, and it is not. The obvious approach — paint a beautiful card, then read the stats back off the pixels — is fragile in a specific and fatal way: every card becomes a parsing problem, every font quirk becomes a data bug, and the database ends up believing whatever the renderer happened to draw.
 
-So the pipeline is inverted. **Data first, image second.**
+So the pipeline is inverted. **Data first, image second.** A structured JSON record is generated first, the artwork is asked to render exactly that record, and the picture is then checked against it. The data is authoritative and the image is a rendering of it — never the other way round.
 
-<img src="assets/slide-07-ai-data-first.png" alt="Data first, image second" width="100%">
+Here is the whole thing, from the dice roll to the transaction hash. Six steps, three gates, and one rule: the day either produces a complete, verified card or it produces nothing at all.
 
-The rarity roll happens **in code, never in the model** — weighted 45 / 27 / 17 / 8 / 2.5 / 0.5 percent across Puddle, Dewdrop, Prism, Aurora, Starlight and Dreamdrop, with a fourteen-day pity timer and a seed derived from the date. Then a language model fills a strict JSON schema for that predetermined rarity. Then an image model is asked to paint *exactly that JSON*, using the original Mochibo card as a structural reference so the frame, the layout and the pixel-art grammar stay consistent across a decade of cards.
+<img src="assets/diagram-ai-pipeline.png" alt="The PixelSlime AI generation pipeline, from rarity roll to on-chain anchor" width="100%">
 
-The artwork is a **rendering of the data**. It is never the source of it.
+**1 · The roll happens in code, never in the model.** Rarity is drawn from a weighted table — 45 / 27 / 17 / 8 / 2.5 / 0.5 percent across Puddle, Dewdrop, Prism, Aurora, Starlight and Dreamdrop — with a fourteen-day pity timer and a seed derived from the date. A language model asked to "pick a rarity" would quietly drift toward the interesting ones, and a decade of cards would end up nothing like the published odds. So it never gets asked.
 
-Four gates stand between a generated card and a published one, because a missing bloom is embarrassing but a wrong one is permanent:
+**2 · The metadata is a schema, not a paragraph.** With the rarity already decided, the model fills a strict JSON schema through Structured Outputs: name, level, type, biome, personality, power, quote and four stats. Prose is never parsed. The stat ranges are conditioned on the rarity that was already rolled.
+
+**Gate one · does it fit?** The JSON is validated with Pydantic *and* trial-encoded through PSC-1. If the result would exceed 175 bytes, the metadata is regenerated — at most twice. A name that is three characters too long is caught here, before anything is drawn.
+
+**3 · The image is asked to paint the JSON.** The original Mochibo card is passed as a structural reference alongside a rarity-matched example, so the frame, the badges, the stat bars and the pixel-art grammar stay consistent across three thousand six hundred and fifty cards. The model is not inventing a card — it is illustrating a record that already exists.
+
+**Gate two · does the picture agree?** A vision pass reads the rendered card back: do the name, level, rarity and stats on the artwork match the JSON? Is there stray alpha? Is this just a Mochibo clone? One repaint is allowed.
+
+**4 · Transparency is fixed deterministically.** Flood-fill from the four corners with Pillow, trim the alpha, emit a 512×768 WebP thumbnail, hash it with SHA-256 and extract the dominant palette. No model is involved, because "is this background transparent" is not a question worth asking a model.
+
+**5 and 6 · Persist, verify, anchor.** The card is encoded to PSC-1 and posted to asmdb — and then read straight back out, decoded, and compared byte for byte with what was sent. Only if those bytes are identical does the stream get hashed with keccak256, minted on Polygon, and the transaction hash written into row part 8.
 
 <img src="assets/slide-08-ai-gates.png" alt="No card is ever published half-written" width="100%">
 
-The last gate is the one that actually matters. A model checking another model's work is useful, but it is not evidence. The only gate that can publish a card is the deterministic one: **read the rows back out of asmdb, decode them, and compare byte for byte with what was sent.** A mismatch rolls the whole day back.
+The last gate is the one that actually matters. A model checking another model's work is useful, but it is not evidence. The only gate that can publish a card is the deterministic one: **read the rows back out of asmdb, decode them, and compare byte for byte with what was sent.** A mismatch rolls the whole day back — a missing bloom is embarrassing, but a wrong one is permanent.
 
 ### 175 bytes, and the codec that made them possible
 
@@ -150,6 +166,8 @@ Four contracts, all live on Polygon Amoy, chain ID 80002.
 
 ## Act 05 — The payoff
 
+<img src="assets/act-05-payoff.png" alt="05 — The payoff — PixelSlime Analytics" width="100%">
+
 **PixelSlime Analytics** is a Fabric "Rayfin" app. It reads the Lakehouse rows the workload landed, decodes PSC-1 inside the semantic model layer, and turns 140 binary bytes per row back into fourteen KPIs — none of them decorative.
 
 <img src="assets/slide-11-dashboard.png" alt="Everything, decoded, in one place" width="100%">
@@ -164,6 +182,8 @@ The app also has one page whose entire job is to explain the constraint that sha
 
 ## Act 06 — How this was actually built
 
+<img src="assets/act-06-method.png" alt="06 — The method — how this was actually built" width="100%">
+
 This is the section people ask about most, so it gets its own act in the deck.
 
 None of this was built by one person typing linearly. It was built by **eleven agent workstreams running in parallel**, coordinated by a single rule that fits in eleven words.
@@ -174,10 +194,20 @@ None of this was built by one person typing linearly. It was built by **eleven a
 
 That is the entire coordination mechanism. There is no standup, because there is nothing to coordinate. The rule is enforceable by looking at a diff — which means an agent can check whether it is about to break the rule *before* it does.
 
-The scaffolding around that rule is equally plain:
+Ownership answers *who writes what*. It does not answer *what can start when* — and that is the other half of the method. Every workstream declares what it depends on, which collapses eleven streams into four waves:
 
-- **A written plan before any code.** Every repository carries a plan document and an agent charter that spell out the architecture, the ownership map and the dependency graph between workstreams. Agents read them first, every time.
-- **Contracts first.** Workstream zero owns nothing but shared contracts, docs and CI. Every other workstream depends on it, and it depends on nobody. Interfaces are frozen before implementations start, so eleven parallel streams never have to negotiate.
+<img src="assets/diagram-agent-graph.png" alt="The agent dependency graph — eleven workstreams across four waves" width="100%">
+
+**Wave 0 is a single blocking workstream.** W0 writes nothing but shared contracts: the JSON schemas, the OpenAPI surface, the design tokens, the PSC-1 test vectors, the Dockerfile and the CI. It depends on nobody, and everybody depends on it. Until it is done, nothing else starts.
+
+**Wave 1 is five streams that never meet.** Once the contracts are frozen, the codec, the asmdb client, the AI pipeline, the design system and the infrastructure can all be built at the same time by agents that have no reason to talk to each other — because everything they need to agree on was already agreed on in wave 0.
+
+**Waves 2 to 4 are assembly.** The backend composes the wave 1 pieces, the frontend builds against API mocks rather than a running backend, the daily job orchestrates, and QA and the chain work land last. The graph is the schedule: an agent reads its own node, sees its dependencies are green, and starts.
+
+The scaffolding around all of this is equally plain:
+
+- **A written plan before any code.** Every repository carries a plan document and an agent charter that spell out the architecture, the ownership map and the dependency graph above. Agents read them first, every time.
+- **Mocks instead of waiting.** A stream that needs something from a later wave builds against the contract's mock rather than blocking on the real thing. The frontend was finished and tested before the backend existed, because the OpenAPI surface was frozen in wave 0.
 - **Tests as the handshake.** 726 backend tests, 49 chain tests and 24 protocol checks. When a workstream's tests go green, the workstream is done — no review meeting required.
 - **Deterministic gates over judgement calls.** Wherever a decision could have been "does this look right?", it was replaced with something a machine can decide. That is why the AI pipeline ends with a byte-for-byte read-back rather than a vibe check.
 
