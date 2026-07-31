@@ -38,11 +38,11 @@ The answer turned out to be yes, and this repository is the narrative of how. Th
 
 This is the only picture you have to remember. A row written by 43 kilobytes of assembly ends up as a measure in a semantic model, and every hop in between is real.
 
-<img src="assets/slide-01-journey.png" alt="One byte's journey, end to end" width="100%">
+<img src="assets/OneImageStory.png" alt="One byte's journey, end to end" width="100%">
 
 Here is the same journey as it actually looks in production — five products, four screens, one continuous line:
 
-<img src="assets/dataflow-poster.png" alt="PixelSlime data flow, from on-chain game assets to asmdb storage to Microsoft Fabric analytics" width="100%">
+<img src="assets/slide-01-journey.png" alt="One byte's journey, end to end" width="100%">
 
 ---
 
