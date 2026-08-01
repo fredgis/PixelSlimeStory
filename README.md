@@ -50,6 +50,21 @@ Here is the same journey as it actually looks in production — five products, f
 
 <img src="assets/act-01-engine.png" alt="01 — The engine — asmdb" width="100%">
 
+Two posters set up the whole act. The first is the engine explained end to end — the slot array, the hash, the 75% rule, why there is no automatic resize, and what "database limit" actually means. The second is the honest competitive read: which engines asmdb is genuinely close to, which cloud products it sits beside, and where it is deliberately not competing at all.
+
+<table>
+<tr>
+<td width="50%" valign="top"><a href="assets/poster-engine-how.png"><img src="assets/poster-engine-how.png" alt="ENGINE HOW — how the asmdb engine works: architecture, limits and design choices" width="100%"></a></td>
+<td width="50%" valign="top"><a href="assets/poster-engine-competitors.png"><img src="assets/poster-engine-competitors.png" alt="Minimalist competitors to asmdb — engine-level comparison, lightweight cloud pricing and strategic conclusions" width="100%"></a></td>
+</tr>
+<tr>
+<td align="center"><em>How the engine works — eight panels, from the 256-byte record to the resize question</em></td>
+<td align="center"><em>Where it sits — closest engines are LMDB and libMDBX, closest cloud product is Turso</em></td>
+</tr>
+</table>
+
+*Click either poster to open it full size.*
+
 **Why write a database in assembly in 2026?** Because the moment you refuse a general-purpose runtime, you have to justify every byte you spend — and it turns out most databases spend an enormous number of bytes on things nobody asked for.
 
 asmdb is a single flat file of 256-byte records. That number is not a style choice. Because 256 is a power of two, finding record *N* is a base address plus a shift — two instructions. There is no page table, no extent manager, no buffer pool and no catalog lookup, because **there is nothing to look up, and nothing to look it up in**.
