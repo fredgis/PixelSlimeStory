@@ -46,6 +46,16 @@ Here is the same journey as it actually looks in production — five products, f
 
 ---
 
+## How all of this got built
+
+Five systems, one person, and **eleven AI agent workstreams running in parallel** — each owning exactly one directory, coordinated by contracts rather than meetings. Here is the two-minute version before we go deep; [Act 06](#act-06--how-this-was-actually-built) explains the full method.
+
+https://github.com/user-attachments/assets/9deb3058-e6ed-4aea-b6da-9968288f4d80
+
+▶ **[Watch in HD on YouTube](https://youtu.be/wQfMG7BwhuQ)**
+
+---
+
 ## Act 01 — The engine
 
 <img src="assets/act-01-engine.png" alt="01 — The engine — asmdb" width="100%">
