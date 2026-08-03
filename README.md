@@ -46,6 +46,16 @@ Here is the same journey as it actually looks in production — five products, f
 
 ---
 
+## See it working, end to end
+
+Before any of the architecture, here is the whole thing actually running — twelve minutes from a card minted on **www.pixelslime.cloud**, through the 175 bytes landing in asmdb on **www.asmdb.cloud**, across the Fabric workload, and out the other side as decoded KPIs in the Rayfin app. No slides, no mockups, just the five systems doing their job in sequence.
+
+https://github.com/user-attachments/assets/12d093a8-918b-47d6-8a80-7b1727a67028
+
+▶ **[Watch in HD on YouTube](https://youtu.be/gObs1dJY15k)**
+
+---
+
 ## How all of this got built
 
 Five systems, one person, and **eleven AI agent workstreams running in parallel** — each owning exactly one directory, coordinated by contracts rather than meetings. Here is the two-minute version before we go deep; [Act 06](#act-06--how-this-was-actually-built) explains the full method.
