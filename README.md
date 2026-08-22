@@ -107,7 +107,7 @@ Durability is equally literal. A commit is not a feeling, it is **a place**: two
 
 An engine nobody can reach is a hobby. **[www.asmdb.cloud](https://www.asmdb.cloud)** is the part that turns a 43 KB binary into something a stranger can provision with a credit card.
 
-<img src="assets/asmdb-full.png" alt="asmdb.cloud engine and service overview" width="100%">
+<img src="assets/asmdb-full-framed.png" alt="asmdb.cloud engine and service overview" width="100%">
 
 <img src="assets/shot-asmdb-cloud.png" alt="The asmdb.cloud console" width="100%">
 
