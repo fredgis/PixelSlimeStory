@@ -10,7 +10,7 @@
 [![the product](https://img.shields.io/badge/04_product-www.pixelslime.cloud-FF8FC5?style=for-the-badge&labelColor=1A1230)](https://www.pixelslime.cloud)
 [![the payoff](https://img.shields.io/badge/05_payoff-PixelSlime_Analytics-FF7A59?style=for-the-badge&labelColor=1A1230)](https://github.com/fredgis/pixelslimeanalytics)
 
-**[⬇ Download the keynote (PPTX, 84 slides)](deck/PixelSlime-asmdb-Keynote.pptx)** · **[⬇ Read it as PDF](deck/PixelSlime-asmdb-Keynote.pdf)**
+**[⬇ Download the keynote (PPTX, 88 slides)](deck/PixelSlime-asmdb-Keynote.pptx)** · **[⬇ Read it as PDF](deck/PixelSlime-asmdb-Keynote.pdf)**
 
 </div>
 
@@ -277,7 +277,7 @@ That is the whole thesis. The five systems above are the evidence for it.
 
 ## The deck
 
-A ninety-minute keynote. 84 slides, six acts. It is the long version of everything above, with the numbers, the topologies and the failure modes left intact.
+A ninety-minute keynote. 88 slides, six acts. It is the long version of everything above, with the numbers, the topologies and the failure modes left intact.
 
 <img src="assets/slide-02-agenda.png" alt="How the next ninety minutes go" width="100%">
 
