@@ -197,6 +197,14 @@ SLIME is the card — one ERC-721 per bloom, holding that card's hash, proving t
 
 Four contracts, all live on Polygon Amoy, chain ID 80002.
 
+### When the card left the browser
+
+<img src="assets/pixelslime-pod.png" alt="PixelSlime POD, a physical daily card display" width="100%">
+
+PixelSlime began as a daily web ritual, but the bloom wanted a physical home. The **PixelSlime POD** is a small ESP32-S3 desk device inside a 3D-printed slime shell. From midnight it waits under a slow pixel rain; at 10:00 Paris time, a new card arrives face down and stays sealed until the center button is pressed.
+
+Then the screen squeezes to a line, flashes, and the card pops open in its rarity color with a burst of confetti. The left and right buttons walk through every earlier bloom. The same public PixelSlime collection, now sitting on a desk instead of behind a browser tab.
+
 ---
 
 ## Act 05 — The payoff
