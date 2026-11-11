@@ -16,13 +16,15 @@
 
 ---
 
+https://github.com/user-attachments/assets/2d67b7ff-f431-45f5-b79c-e93f100d782f
+
+---
+
 ## This repository is the story, not the code
 
-Five systems were built. Each one is useful on its own. Together they answer a question that is easy to ask and unusually hard to prove:
+This is the story of how PixelSlime got made. It started with a database engine written in assembly and ended up as a daily card game with a Fabric dashboard on top. Five things got built along the way, and each one builds on the one before it.
 
-> **If you write a database engine from scratch, can you still get all the way to a semantic model in Microsoft Fabric — without a single line of it being a demo?**
-
-The answer turned out to be yes, and this repository is the narrative of how. The code lives in three sibling repositories. What lives *here* is the argument, the deck, and the pictures.
+The code is in three other repositories. This one has the deck and the pictures, and tells the story in order, one act at a time.
 
 | | What it is | Where it lives |
 |---|---|---|
